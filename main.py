@@ -1,8 +1,11 @@
-import random
-distancias={}
-posiciones=[]
-n=10
+# Bibliotecas
+import random 
 
+# Variables globales
+n=10 # Numero de ciudades
+distancias={} # diccionario para guardar las distancias entre las ciudades cargado del fichero
+
+# imprime las distancias (del diccionario) entre las ciudades cuyos indices estan juntos en el array 'indices'
 def imprimirDistancias(indices, diccionario):
 	i=0
 	for i in range(len(indices)-1):
@@ -16,6 +19,7 @@ def imprimirDistancias(indices, diccionario):
 			d = int(array[aux])
 		print "Distancia entre %d y %d: %d" % (aux,aux1,d)
 
+# lectura del fichero y carga de datos
 def leerfichero():
 	i=1; aux=[]
 	f = open("distancias_10.txt","r")
@@ -28,14 +32,18 @@ def leerfichero():
 	# print distancias
 	f.close()
 
+# funcion principal
 def main():
-	posiciones = range(1,n)
-	a=0; b=0
 
-	while a == b:
+	leerfichero() # cargo los datos
+	posiciones = range(1,n) # array de posiciones de las ciudades
+	a=0; b=0 # indices a cambiar 
+
+	while a == b: # son aleatorios pero no pueden ser el mismo (porque no se cambiarian)
 		a = random.randrange(0,n-1)
 		b = random.randrange(0,n-1)
 
+	# intercambio los indices a y b
 	aux = posiciones[a]
 	posiciones[a] = posiciones[b]	
 	posiciones[b] = aux
@@ -45,5 +53,5 @@ def main():
 	print posiciones
 	imprimirDistancias(posiciones,distancias)
 
-leerfichero()
-main()
+if __name__ == '__main__': # funcion main en el archivo main
+	main()
