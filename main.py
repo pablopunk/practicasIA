@@ -1,5 +1,6 @@
 # Bibliotecas
 import random 
+import itertools
 
 # Variables globales
 n=10 # Numero de ciudades
@@ -9,10 +10,10 @@ distancias={} # diccionario para guardar las distancias entre las ciudades carga
 def calcularDistancia(indices):
 	i=0; total=0
 	# sumo al total la distancia de 0 a 1
-	aux = distancias[1]
+	aux = distancias[indices[0]]
 	total += int(aux[0])
 	# sumo al total la distancia de 0 a n-1
-	aux = distancias[n-1]
+	aux = distancias[indices[n-2]]
 	total += int(aux[0])
 
 	for i in range(len(indices)-1):
@@ -41,52 +42,46 @@ def leerfichero():
 	# print distancias
 	f.close()
 
-# intercambiar dos posiciones aleatorias
-def generar(lista):
-	a=0; b=0
-	otralista = lista[:]
-	# dos indices aleatorios
-	while a == b:
-		a = random.randrange(0,n-1)
-		b = random.randrange(0,n-1)
-	# intercambio dos posiciones aleatorias
-	aux = otralista[a]
-	otralista[a] = otralista[b]
-	otralista[b] = aux
+def intercambiar(lista, a, b):
+	aux = lista[a]
+	lista[a] = lista[b]
+	lista [b] = aux
 
-	print otralista
-	return otralista
-
-# funcion principal
-def main():
-
-	leerfichero() # cargo los datos
+# funcion principal del algoritmo
+def algoritmo():
 	vecinoactual = range(1,n) # array de posiciones de las ciudades
 	mejorvecino = []
 
 	# Posiciones aleatorias
 	random.shuffle(vecinoactual)
-	print vecinoactual
-	total = calcularDistancia(vecinoactual)
-	print "Distancia total: %d" % total
 
 	while True:
 
 		mejorvecino = vecinoactual[:] # copio el vecino actual
 		aux = []
 
-		while True:
-			aux = generar(vecinoactual)
+		# todas las posibles permutaciones
+		permutaciones = list(itertools.permutations(range(0,n-1), 2))
+
+		for i in range(len(permutaciones)):
+			# prueba la permutacion
+			aux = vecinoactual[:]
+			intercambiar(aux, permutaciones[i][0], permutaciones[i][1])
 			if calcularDistancia(aux) < calcularDistancia(mejorvecino):
 				break
 
 		if calcularDistancia(aux) < calcularDistancia(vecinoactual):
 			vecinoactual = aux[:]
 
-		print "Distancia actual: %d" % calcularDistancia(mejorvecino)
-
-		if (calcularDistancia(vecinoactual) >= calcularDistancia(mejorvecino)):
+		if calcularDistancia(vecinoactual) >= calcularDistancia(mejorvecino):
 			break
+
+	print vecinoactual
+	print "Distancia actual: %d" % calcularDistancia(vecinoactual)
+
+def main():
+	leerfichero() # cargo los datos
+	algoritmo()
 
 if __name__ == '__main__': # funcion main en el archivo main
 	main()
