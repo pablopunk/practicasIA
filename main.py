@@ -1,18 +1,20 @@
 # Bibliotecas
 import random 
 import itertools
-import pickle
+import sys
 import math
 
 # Variables globales
 n=10 # Numero de ciudades
 nIteraciones=10 # numero de ejecuciones del algoritmo
 distancias={} # diccionario para guardar las distancias entre las ciudades cargado del fichero
+filein="distancias_10.txt"
+fileout="ejecucion.txt"
 
 # lectura del fichero y carga de datos
 def leerfichero():
 	i=1; aux=[]
-	f = open("distancias_10.txt","r")
+	f = open(filein,"r")
 
 	for linea in f.readlines():
 		aux = linea.split()
@@ -82,12 +84,18 @@ def algoritmo():
 	return vecinoactual, calcularDistancia(vecinoactual)
 	print "Distancia actual: %d" % calcularDistancia(vecinoactual)
 
+# escribe los resultados del algoritmo varias veces en un fichero
 def escribirFichero(iteraciones):
 	media = 0; dist = list() # voy a calcular la media y la desviacion
-	f = open("ejecucion.txt","w")
+	menor = 1000000000; mayor = 0
+	f = open(fileout,"w")
 	for i in range(1, iteraciones+1):
 		solucion, distanciaTotal = algoritmo()
 		media += distanciaTotal
+		if distanciaTotal < menor:
+			menor = distanciaTotal
+		if distanciaTotal > mayor:
+			mayor = distanciaTotal
 		dist.append(distanciaTotal)
 		f.write("Solucion %d:\t0 - " % i)
 		for j in range(len(solucion)):
@@ -97,8 +105,10 @@ def escribirFichero(iteraciones):
 	# Media y desviacion
 	media /= iteraciones
 	desviacion = math.sqrt((sum([x*x for x in dist])/iteraciones)-(media**2))
-	f.write("\nMedia = %f\tDesviacion = %f\n" % (media, desviacion))
+	f.write("\nMedia = %d\tDesviacion = %.2f" % (media, desviacion))
+	f.write("\nMenor = %d\tMayor = %d\n" % (menor, mayor))
 	f.close()
+	print str(nIteraciones) + " guardadas en el fichero '" + fileout + "'"
 
 def main():
 	leerfichero() # cargo los datos
