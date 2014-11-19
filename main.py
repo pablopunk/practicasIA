@@ -1,10 +1,26 @@
 # Bibliotecas
 import random 
 import itertools
+import pickle
+import math
 
 # Variables globales
 n=10 # Numero de ciudades
+nIteraciones=10 # numero de ejecuciones del algoritmo
 distancias={} # diccionario para guardar las distancias entre las ciudades cargado del fichero
+
+# lectura del fichero y carga de datos
+def leerfichero():
+	i=1; aux=[]
+	f = open("distancias_10.txt","r")
+
+	for linea in f.readlines():
+		aux = linea.split()
+		distancias[i] = aux
+		i+=1
+
+	# print distancias
+	f.close()
 
 # calcular la distancia total
 def calcularDistancia(indices):
@@ -29,19 +45,7 @@ def calcularDistancia(indices):
 		total += d
 	return total
 
-# lectura del fichero y carga de datos
-def leerfichero():
-	i=1; aux=[]
-	f = open("distancias_10.txt","r")
-
-	for linea in f.readlines():
-		aux = linea.split()
-		distancias[i] = aux
-		i+=1
-
-	# print distancias
-	f.close()
-
+# intercambiar dos elementos de la lista
 def intercambiar(lista, a, b):
 	aux = lista[a]
 	lista[a] = lista[b]
@@ -56,13 +60,12 @@ def algoritmo():
 	random.shuffle(vecinoactual)
 
 	while True:
-
 		mejorvecino = vecinoactual[:] # copio el vecino actual
 		aux = []
-
 		# todas las posibles permutaciones
 		permutaciones = list(itertools.permutations(range(0,n-1), 2))
 
+		# recorro todas las permutaciones posibles hasta que encuentre una distancia menor
 		for i in range(len(permutaciones)):
 			# prueba la permutacion
 			aux = vecinoactual[:]
@@ -76,12 +79,30 @@ def algoritmo():
 		if calcularDistancia(vecinoactual) >= calcularDistancia(mejorvecino):
 			break
 
-	print vecinoactual
+	return vecinoactual, calcularDistancia(vecinoactual)
 	print "Distancia actual: %d" % calcularDistancia(vecinoactual)
+
+def escribirFichero(iteraciones):
+	media = 0; dist = list() # voy a calcular la media y la desviacion
+	f = open("ejecucion.txt","w")
+	for i in range(1, iteraciones+1):
+		solucion, distanciaTotal = algoritmo()
+		media += distanciaTotal
+		dist.append(distanciaTotal)
+		f.write("Solucion %d:\t0 - " % i)
+		for j in range(len(solucion)):
+			f.write("%d - " % solucion[j]) # imprimo el array de indices
+		f.write("0\tDistancia: %d KM\n" % distanciaTotal)
+
+	# Media y desviacion
+	media /= iteraciones
+	desviacion = math.sqrt((sum([x*x for x in dist])/iteraciones)-(media**2))
+	f.write("\nMedia = %f\tDesviacion = %f\n" % (media, desviacion))
+	f.close()
 
 def main():
 	leerfichero() # cargo los datos
-	algoritmo()
+	escribirFichero(nIteraciones) # imprimo n iteraciones del algoritmo
 
 if __name__ == '__main__': # funcion main en el archivo main
 	main()
