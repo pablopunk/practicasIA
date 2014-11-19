@@ -66,6 +66,7 @@ def algoritmo():
 		aux = []
 		# todas las posibles permutaciones
 		permutaciones = list(itertools.permutations(range(0,n-1), 2))
+		random.shuffle(permutaciones) # orden aleatorio
 
 		# recorro todas las permutaciones posibles hasta que encuentre una distancia menor
 		for i in range(len(permutaciones)):
