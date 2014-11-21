@@ -62,6 +62,7 @@ def intercambiar(lista, a, b):
 def algoritmo():
     vecinoactual = range(1, n)  # array de posiciones de las ciudades
     mejorvecino = []
+    aux = []
 
     # todas las posibles permutaciones
     permutaciones = list(itertools.permutations(range(0, n - 1), 2))
@@ -85,7 +86,7 @@ def algoritmo():
         if calcularDistancia(aux) < calcularDistancia(vecinoactual):
             vecinoactual = aux[:]
 
-        if calcularDistancia(vecinoactual) >= calcularDistancia(mejorvecino):
+        if calcularDistancia(aux) >= calcularDistancia(mejorvecino):
             break
 
     return vecinoactual, calcularDistancia(vecinoactual)
@@ -118,7 +119,7 @@ def escribirFichero(iteraciones):
     f.write("\nMedia = %d\tDesviacion = %.2f" % (media, desviacion))
     f.write("\nMenor = %d\tMayor = %d\n" % (menor, mayor))
     f.close()
-    print str(nIteraciones) + " guardadas en el fichero '" + fileout + "'"
+    print str(nIteraciones) + " iteraciones guardadas en el fichero '" + fileout + "'"
 
 
 def main():
