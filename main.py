@@ -100,7 +100,8 @@ def algoritmo():
             # prueba la permutacion
             aux = vecinoactual[:]
             intercambiar(aux, permutaciones[i][0], permutaciones[i][1])
-            cuentaPerm+=1
+            if hayAleatorios: # recorro las permutaciones del fichero
+                cuentaPerm+=1
             if calcularDistancia(aux) < calcularDistancia(mejorvecino):
                 break
 
