@@ -3,6 +3,7 @@ import random
 import itertools
 import sys
 import math
+import os 
 
 # Variables globales
 n = 10  # Numero de ciudades
@@ -10,21 +11,31 @@ nIteraciones = 10  # numero de ejecuciones del algoritmo
 distancias = {}  # diccionario para guardar las distancias entre las ciudades cargado del fichero
 filein = "distancias_10.txt"
 fileout = "ejecucion.txt"
+filealeatorios = "aleatorios.txt"
+vecinoinicial = [] # del fichero de aleatorios
+aleatorios = [] # numeros aleatorios (permutaciones de 2 elementos)
 
 # lectura del fichero y carga de datos
 def leerfichero():
     i = 1;
     aux = []
     f = open(filein, "r")
-
     for linea in f.readlines():
         aux = linea.split()
         distancias[i] = aux
         i += 1
-
     # print distancias
     f.close()
 
+# lectura del fichero de numeros aleatorios
+def leerAleatorios():
+    hayAleatorios = True
+    f = open(filealeatorios, "r")
+    for i in range(n-1): # primero vecino 
+        numero = f.readline()
+        vecinoinicial.append(1+int(math.floor(float(numero)*(n-1))))
+    for numero in f.readlines(): # permutaciones
+        aleatorios.append(int(math.floor(float(numero)*(n-1))))
 
 # calcular la distancia total
 def calcularDistancia(indices):
@@ -56,6 +67,9 @@ def intercambiar(lista, a, b):
     aux = lista[a]
     lista[a] = lista[b]
     lista[b] = aux
+    # print a,b
+    # print lista
+    # print "Distancia: ", calcularDistancia(lista)
 
 
 # funcion principal del algoritmo
@@ -63,23 +77,30 @@ def algoritmo():
     vecinoactual = range(1, n)  # array de posiciones de las ciudades
     mejorvecino = []
     aux = []
+    permutaciones = []
+    cuentaPerm = 0
 
-    # todas las posibles permutaciones
-    permutaciones = list(itertools.permutations(range(0, n - 1), 2))
-
-    # Posiciones aleatorias
-    random.shuffle(vecinoactual)
+    if not hayAleatorios(): # si la lista aleatorios esta vacia
+        random.shuffle(vecinoactual) # posiciones aleatorias
+        permutaciones = list(itertools.permutations(range(0, n - 1), 2)) # todas las posibles permutaciones
+    else:
+        vecinoactual = vecinoinicial[:]
+        for i in xrange(0,len(aleatorios),2):
+            permutaciones.append([aleatorios[i],aleatorios[i+1]])
 
     while True:
         mejorvecino = vecinoactual[:]  # copio el vecino actual
         aux = []
-        random.shuffle(permutaciones)  # orden aleatorio de las permutaciones
+
+        if not hayAleatorios():
+            random.shuffle(permutaciones)  # orden aleatorio de las permutaciones
 
         # recorro todas las permutaciones posibles hasta que encuentre una distancia menor
-        for i in range(len(permutaciones)):
+        for i in range(cuentaPerm, len(permutaciones)):
             # prueba la permutacion
             aux = vecinoactual[:]
             intercambiar(aux, permutaciones[i][0], permutaciones[i][1])
+            cuentaPerm+=1
             if calcularDistancia(aux) < calcularDistancia(mejorvecino):
                 break
 
@@ -89,8 +110,8 @@ def algoritmo():
         if calcularDistancia(aux) >= calcularDistancia(mejorvecino):
             break
 
+    #print "Distancia actual: %d" % calcularDistancia(vecinoactual)
     return vecinoactual, calcularDistancia(vecinoactual)
-    print "Distancia actual: %d" % calcularDistancia(vecinoactual)
 
 
 # escribe los resultados del algoritmo varias veces en un fichero
@@ -121,10 +142,17 @@ def escribirFichero(iteraciones):
     f.close()
     print str(nIteraciones) + " iteraciones guardadas en el fichero '" + fileout + "'"
 
+def hayAleatorios():
+    return os.path.isfile(filealeatorios)
 
 def main():
     leerfichero()  # cargo los datos
-    escribirFichero(nIteraciones)  # imprimo n iteraciones del algoritmo
+    if hayAleatorios():
+        print "Usando el fichero " + str(filealeatorios)
+        leerAleatorios()
+        escribirFichero(1)  # imprimo n iteraciones del algoritmo
+    else:
+        escribirFichero(nIteraciones)  # imprimo n iteraciones del algoritmo
 
 
 if __name__ == '__main__':  # funcion main en el archivo main
