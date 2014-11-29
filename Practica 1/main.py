@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 # Bibliotecas
 import random
 import itertools
@@ -67,9 +69,9 @@ def intercambiar(lista, a, b):
     aux = lista[a]
     lista[a] = lista[b]
     lista[b] = aux
-    # print a,b
-    # print lista
-    # print "Distancia: ", calcularDistancia(lista)
+    print "   [",a,"<->",b,"]"
+    print "  ",lista
+    print "  ","Distancia: ", calcularDistancia(lista)
 
 
 # funcion principal del algoritmo
@@ -94,6 +96,9 @@ def algoritmo():
 
         if not hayAleatorios():
             random.shuffle(permutaciones)  # orden aleatorio de las permutaciones
+
+        print "Camino: ",mejorvecino
+        print "Distancia: ",calcularDistancia(mejorvecino)
 
         # recorro todas las permutaciones posibles hasta que encuentre una distancia menor
         for i in range(cuentaPerm, len(permutaciones)):
@@ -141,10 +146,12 @@ def escribirFichero(iteraciones):
     f.write("\nMedia = %d\tDesviacion = %.2f" % (media, desviacion))
     f.write("\nMenor = %d\tMayor = %d\n" % (menor, mayor))
     f.close()
-    print str(nIteraciones) + " iteraciones guardadas en el fichero '" + fileout + "'"
+    print str(iteraciones) + " iteraciones guardadas en el fichero '" + fileout + "'"
 
 def hayAleatorios():
-    return os.path.isfile(filealeatorios)
+    if len(sys.argv) > 1 and os.path.isfile(filealeatorios):
+        return True
+    return False
 
 def main():
     leerfichero()  # cargo los datos
@@ -152,6 +159,8 @@ def main():
         print "Usando el fichero " + str(filealeatorios)
         leerAleatorios()
         escribirFichero(1)  # imprimo n iteraciones del algoritmo
+    elif len(sys.argv) > 1:
+        print " -> python main.py aleatorios.txt"
     else:
         escribirFichero(nIteraciones)  # imprimo n iteraciones del algoritmo
 

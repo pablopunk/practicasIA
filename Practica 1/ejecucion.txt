@@ -1,4 +1,13 @@
-Solucion 1:	0 - 1 - 3 - 7 - 4 - 5 - 9 - 6 - 2 - 8 - 0	Distancia: 5783 KM
+Solucion 1:	0 - 6 - 2 - 8 - 4 - 5 - 9 - 7 - 3 - 1 - 0	Distancia: 6095 KM
+Solucion 2:	0 - 8 - 3 - 2 - 4 - 7 - 5 - 9 - 6 - 1 - 0	Distancia: 6746 KM
+Solucion 3:	0 - 8 - 2 - 4 - 5 - 7 - 3 - 1 - 9 - 6 - 0	Distancia: 5460 KM
+Solucion 4:	0 - 3 - 7 - 5 - 4 - 2 - 8 - 9 - 6 - 1 - 0	Distancia: 6456 KM
+Solucion 5:	0 - 3 - 7 - 5 - 9 - 6 - 1 - 4 - 8 - 2 - 0	Distancia: 6990 KM
+Solucion 6:	0 - 1 - 6 - 9 - 2 - 3 - 7 - 5 - 4 - 8 - 0	Distancia: 5731 KM
+Solucion 7:	0 - 1 - 6 - 2 - 4 - 5 - 7 - 3 - 9 - 8 - 0	Distancia: 6913 KM
+Solucion 8:	0 - 6 - 2 - 9 - 1 - 3 - 7 - 5 - 4 - 8 - 0	Distancia: 5928 KM
+Solucion 9:	0 - 7 - 3 - 1 - 6 - 9 - 5 - 4 - 2 - 8 - 0	Distancia: 6228 KM
+Solucion 10:	0 - 3 - 1 - 4 - 5 - 7 - 2 - 6 - 9 - 8 - 0	Distancia: 7085 KM
 
-Media = 5783	Desviacion = 0.00
-Menor = 5783	Mayor = 5783
+Media = 6363	Desviacion = 537.76
+Menor = 5460	Mayor = 7085
