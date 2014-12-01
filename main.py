@@ -11,9 +11,9 @@ import os
 n = 10  # Numero de ciudades
 nIteraciones = 10  # numero de ejecuciones del algoritmo
 distancias = {}  # diccionario para guardar las distancias entre las ciudades cargado del fichero
-filein = "distancias_10.txt"
+filein = "distancias_test.txt"
 fileout = "ejecucion.txt"
-filealeatorios = "aleatorios.txt"
+filealeatorios = "aleatorios_test.txt"
 vecinoinicial = [] # del fichero de aleatorios
 aleatorios = [] # numeros aleatorios (permutaciones de 2 elementos)
 
@@ -33,16 +33,23 @@ def leerfichero():
 def leerAleatorios():
     hayAleatorios = True
     f = open(filealeatorios, "r")
-    for i in range(n-1): # primero vecino 
+    count = 0
+    while count < n-1: # busca la solucion inicial hasta que las ciudades son diferentes
         numero = f.readline()
-        vecinoinicial.append(1+int(math.floor(float(numero)*(n-1))))
+        num = 1+int(math.floor(float(numero)*(n-1)))
+        if num not in vecinoinicial:
+            vecinoinicial.append(num)
+            vecinoinicial[count] = num
+            count+=1
+    count = 0
     for numero in f.readlines(): # permutaciones
-        aleatorios.append(int(math.floor(float(numero)*(n-1))))
+        num = int(math.floor(float(numero)*(n-1)))
+        aleatorios.append(num)
 
 # calcular la distancia total
 def calcularDistancia(indices):
     i = 0;
-    total = 0
+    total = 0; d = 0
     # sumo al total la distancia de 0 a 1
     aux = distancias[indices[0]]
     total += int(aux[0])
@@ -69,10 +76,6 @@ def intercambiar(lista, a, b):
     aux = lista[a]
     lista[a] = lista[b]
     lista[b] = aux
-    print "   [",a,"<->",b,"]"
-    print "  ",lista
-    print "  ","Distancia: ", calcularDistancia(lista)
-
 
 # funcion principal del algoritmo
 def algoritmo():
@@ -80,19 +83,22 @@ def algoritmo():
     mejorvecino = []
     aux = []
     permutaciones = []
-    cuentaPerm = 0
 
     if not hayAleatorios(): # si la lista aleatorios esta vacia
         random.shuffle(vecinoactual) # posiciones aleatorias
         permutaciones = list(itertools.permutations(range(0, n - 1), 2)) # todas las posibles permutaciones
     else:
         vecinoactual = vecinoinicial[:]
-        for i in xrange(0,len(aleatorios),2):
+        for i in xrange(0,len(aleatorios)-1,2):
             permutaciones.append([aleatorios[i],aleatorios[i+1]])
+
+    print vecinoactual
 
     while True:
         mejorvecino = vecinoactual[:]  # copio el vecino actual
         aux = []
+        vecinos = []
+        cuenta = 0
 
         if not hayAleatorios():
             random.shuffle(permutaciones)  # orden aleatorio de las permutaciones
@@ -101,13 +107,23 @@ def algoritmo():
         print "Distancia: ",calcularDistancia(mejorvecino)
 
         # recorro todas las permutaciones posibles hasta que encuentre una distancia menor
-        for i in range(cuentaPerm, len(permutaciones)):
+        for i in range(0, len(permutaciones)):
             # prueba la permutacion
             aux = vecinoactual[:]
-            intercambiar(aux, permutaciones[i][0], permutaciones[i][1])
-            if hayAleatorios: # recorro las permutaciones del fichero
-                cuentaPerm+=1
-            if calcularDistancia(aux) < calcularDistancia(mejorvecino):
+            permutacion = permutaciones.pop(0)
+            a = permutacion[0]
+            b = permutacion[1]
+            intercambiar(aux, a, b)
+            if aux in vecinos or (a==b):
+                continue # paso a la siguiente iteracion
+            vecinos.append(aux) # llevo un array de vecinos para comprobar que no se repiten
+            dist = calcularDistancia(aux)
+            # imprimo cada vecino
+            print "   ----- Vecino %d -----" % cuenta; cuenta+=1
+            print "   [",a,"<->",b,"]"
+            print "  ",aux
+            print "  ","Distancia: ",dist
+            if dist < calcularDistancia(mejorvecino):
                 break
 
         if calcularDistancia(aux) < calcularDistancia(vecinoactual):
