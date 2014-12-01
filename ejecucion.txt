@@ -1,4 +1,4 @@
-Solucion 1:	0 - 1 - 4 - 8 - 2 - 5 - 9 - 6 - 7 - 3 - 0	Distancia: 6913 KM
+Solucion 1:	0 - 8 - 4 - 2 - 3 - 7 - 5 - 9 - 6 - 1 - 0	Distancia: 5629 KM
 
-Media = 6913	Desviacion = 0.00
-Menor = 6913	Mayor = 6913
+Media = 5629	Desviacion = 0.00
+Menor = 5629	Mayor = 5629

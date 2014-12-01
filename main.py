@@ -12,7 +12,6 @@ n = 10  # Numero de ciudades
 nIteraciones = 10  # numero de ejecuciones del algoritmo
 distancias = {}  # diccionario para guardar las distancias entre las ciudades cargado del fichero
 filein = "distancias_test.txt"
-fileout = "ejecucion.txt"
 filealeatorios = "aleatorios_test.txt"
 vecinoinicial = [] # del fichero de aleatorios
 aleatorios = [] # numeros aleatorios (permutaciones de 2 elementos)
@@ -83,6 +82,7 @@ def algoritmo():
     mejorvecino = []
     aux = []
     permutaciones = []
+    numeroSolucion = 0
 
     if not hayAleatorios(): # si la lista aleatorios esta vacia
         random.shuffle(vecinoactual) # posiciones aleatorias
@@ -95,21 +95,22 @@ def algoritmo():
     print vecinoactual
 
     while True:
-        mejorvecino = vecinoactual[:]  # copio el vecino actual
+        mejorvecino = list(vecinoactual)  # copio el vecino actual
         aux = []
         vecinos = []
-        cuenta = 0
+        cuenta = 0; dist = 0
 
         if not hayAleatorios():
             random.shuffle(permutaciones)  # orden aleatorio de las permutaciones
 
+        print "------- Solucion",numeroSolucion,"-------"; numeroSolucion+=1
         print "Camino: ",mejorvecino
         print "Distancia: ",calcularDistancia(mejorvecino)
 
         # recorro todas las permutaciones posibles hasta que encuentre una distancia menor
         for i in range(0, len(permutaciones)):
+            aux = list(vecinoactual)
             # prueba la permutacion
-            aux = vecinoactual[:]
             permutacion = permutaciones.pop(0)
             a = permutacion[0]
             b = permutacion[1]
@@ -126,23 +127,22 @@ def algoritmo():
             if dist < calcularDistancia(mejorvecino):
                 break
 
-        if calcularDistancia(aux) < calcularDistancia(vecinoactual):
-            vecinoactual = aux[:]
+        if dist < calcularDistancia(vecinoactual):
+            vecinoactual = list(aux)
 
-        if calcularDistancia(aux) >= calcularDistancia(mejorvecino):
+        if dist >= calcularDistancia(mejorvecino):
             break
 
     #print "Distancia actual: %d" % calcularDistancia(vecinoactual)
     return vecinoactual, calcularDistancia(vecinoactual)
 
 
-# escribe los resultados del algoritmo varias veces en un fichero
-def escribirFichero(iteraciones):
+# escribe los resultados del algoritmo varias veces
+def imprimir(iteraciones):
     media = 0;
     dist = list()  # voy a calcular la media y la desviacion
     menor = 1000000000;
     mayor = 0
-    f = open(fileout, "w")
     for i in range(1, iteraciones + 1):
         solucion, distanciaTotal = algoritmo()
         media += distanciaTotal
@@ -151,18 +151,15 @@ def escribirFichero(iteraciones):
         if distanciaTotal > mayor:
             mayor = distanciaTotal
         dist.append(distanciaTotal)
-        f.write("Solucion %d:\t0 - " % i)
-        for j in range(len(solucion)):
-            f.write("%d - " % solucion[j])  # imprimo el array de indices
-        f.write("0\tDistancia: %d KM\n" % distanciaTotal)
+        print "\nSolucion %d:" % i
+        print solucion
+        print "Distancia: %d KM\n" % distanciaTotal
 
     # Media y desviacion
     media /= iteraciones
     desviacion = math.sqrt((sum([x * x for x in dist]) / iteraciones) - (media ** 2))
-    f.write("\nMedia = %d\tDesviacion = %.2f" % (media, desviacion))
-    f.write("\nMenor = %d\tMayor = %d\n" % (menor, mayor))
-    f.close()
-    print str(iteraciones) + " iteraciones guardadas en el fichero '" + fileout + "'"
+    print "Media = %d\tDesviacion = %.2f" % (media, desviacion)
+    print "Menor = %d\tMayor = %d\n" % (menor, mayor)
 
 def hayAleatorios():
     if len(sys.argv) > 1 and os.path.isfile(filealeatorios):
@@ -174,11 +171,11 @@ def main():
     if hayAleatorios():
         print "Usando el fichero " + str(filealeatorios)
         leerAleatorios()
-        escribirFichero(1)  # imprimo n iteraciones del algoritmo
+        imprimir(1)  # imprimo n iteraciones del algoritmo
     elif len(sys.argv) > 1:
         print " -> python main.py aleatorios.txt"
     else:
-        escribirFichero(nIteraciones)  # imprimo n iteraciones del algoritmo
+        imprimir(nIteraciones)  # imprimo n iteraciones del algoritmo
 
 
 if __name__ == '__main__':  # funcion main en el archivo main
