@@ -8,10 +8,10 @@ import math
 import os 
 
 # Variables globales
-n = 10  # Numero de ciudades
+n = 100  # Numero de ciudades
 nIteraciones = 10  # numero de ejecuciones del algoritmo
 distancias = {}  # diccionario para guardar las distancias entre las ciudades cargado del fichero
-filein = "distancias_test.txt"
+filein = "distancias_100ciudades.txt"
 filealeatorios = "aleatorios_test.txt"
 vecinoinicial = [] # del fichero de aleatorios
 aleatorios = [] # numeros aleatorios (permutaciones de 2 elementos)
