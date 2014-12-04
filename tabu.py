@@ -1,17 +1,13 @@
 #!/usr/bin/env python
-## Se recomienda usar un compilador de python para aumentar la eficiencia
 
 # Bibliotecas
 import random
-import itertools
-import sys
 import math
-import os
 
 # Variables globales
 n = 100  # Numero de ciudades
 nEjecuciones = 10  # numero de ejecuciones del algoritmo
-nIteraciones = 10000 # numero de iteraciones dentro del algoritmo
+nIteraciones = 100 # numero de iteraciones dentro del algoritmo
 distancias = {}  # diccionario para guardar las distancias entre las ciudades cargado del fichero
 filein = "distancias_100ciudades.txt"
 filealeatorios = "aleatorios.txt"
@@ -30,11 +26,14 @@ def leerfichero():
     f.close()
 
 # lectura del fichero de numeros aleatorios o generacion de los mismos
-def leerAleatorios(hayFichero):
-    if hayFichero:
+def leerAleatorios(confichero):
+    global aleatorios
+    aleatorios = list() # reinicio la lista por si ya estaba llena
+    if confichero:
         f = open(filealeatorios, "r")
         for numero in f.readlines(): # guardo los numeros truncados en el array
             aleatorios.append( 1 + int(math.floor(float(numero)*(n-1))) )
+        f.close()
     else:
         for numero in range(0,10000):
             aleatorios.append(random.randrange(1,n))
@@ -113,22 +112,24 @@ def getTerna(ciudades, ciudad):
         return [ciudades[posicion-1],ciudades[posicion],ciudades[posicion+1]]
 
 # algoritmo de busqueda tabu
-def algoritmo():
+def algoritmo(op):
     solucionActual = obtenerSolucionInicial()
+    if op != "s":
+        leerAleatorios(False) # recargo el array de aleatorios
     ciudadesAleatorias = list(aleatorios)
     siguienteVecino = list(solucionActual)
     mejorVecino = list(solucionActual)
     mejorDistancia = calcularDistanciaTotal(solucionActual)
     tabu = []; contador100 = -1; nReinicios = 0; mejorI = 0
 
-    print "RECORRIDO INICIAL:",solucionActual
-    print "DISTANCIA:",mejorDistancia,"\n"
+    #print "RECORRIDO INICIAL:",solucionActual
+    #print "DISTANCIA:",mejorDistancia,"\n"
 
     for i in range(nIteraciones):
         contador100+=1
         if (contador100==100):
             contador100 = 0; nReinicios+=1; tabu = []
-            print "========= REINICIO",nReinicios,"========="
+            #print "========= REINICIO",nReinicios,"========="
             solucionActual = list(mejorVecino)
         else:
             solucionActual = list(siguienteVecino)
@@ -136,12 +137,12 @@ def algoritmo():
         indice = solucionActual.index(ciudad)
         vecinos = generarVecinos(tabu, solucionActual, indice)
         d = calcularDistanciaTotal(solucionActual)
-        print "ITERACION:",i+1
-        print "CIUDAD A CAMBIAR:",ciudad
-        print "POSICIONES CONSIDERADAS: ",
+        #print "ITERACION:",i+1
+        #print "CIUDAD A CAMBIAR:",ciudad
+        #print "POSICIONES CONSIDERADAS: ",
         # primera posicion
         menor = calcularDistanciaTotal(vecinos[0][0]);
-        print "0",
+        #print "0",
         siguienteVecino = list(vecinos[0][0])
         solucionActual = list(vecinos[0][0])
         # siguientes posiciones
@@ -151,26 +152,65 @@ def algoritmo():
                 solucionActual = list(vecinoAux[0])
                 menor = dist
                 siguienteVecino = list(vecinoAux[0])
-                print vecinoAux[1], # el segundo campo guarda el indice que cambio
+                #print vecinoAux[1], # el segundo campo guarda el indice que cambio
                 if dist < mejorDistancia: # cada 100 iteraciones compruebo si hay un vecino mejor
                     mejorDistancia = dist
                     mejorI = i+1 # mejor iteracion
                     mejorVecino = list(vecinoAux[0])
                     contador100 = -1; # reinicio el contador
-                    print "\n========= RECORRIDO MEJOR SOLUCION GLOBAL ========="
+                    #print "\n========= RECORRIDO MEJOR SOLUCION GLOBAL ========="
 
-        print "\nSOLUCION ACTUAL: ",siguienteVecino
-        print "DISTANCIA: ",menor
+        #print "\nSOLUCION ACTUAL: ",siguienteVecino
+        #print "DISTANCIA: ",menor
         tabu.append(getTerna(siguienteVecino,ciudad))
-        print "TABU:",tabu,"\n\n"
-    print "\nMejor distancia:",mejorDistancia
-    print "\nMejor vecino:",mejorVecino
-    print "\nEn la iteracion:",mejorI
-    print "Numero de reinicios:",nReinicios
+        #print "TABU:",tabu,"\n\n"
+    #print "\nMejor distancia:",mejorDistancia
+    #print "\nMejor vecino:",mejorVecino
+    #print "\nEn la iteracion:",mejorI
+    #print "Numero de reinicios:",nReinicios
     return mejorDistancia,mejorVecino,mejorI,nReinicios
 
 # Ejecucion
 leerfichero()
-leerAleatorios(True)
+print "Desea usar el archivo 'aleatorios.txt'? (s/n):",
+opcion = raw_input()
+opcion = opcion.lower()
+if opcion == "s":
+    leerAleatorios(opcion)
 solucionInicial = obtenerSolucionInicial()
-algoritmo()
+algoritmo(opcion)
+
+mejorD,mejorV,mejorI,mejorR=algoritmo(opcion)
+peorD = 0; dist = list(); iterac = list(); reinic = list()
+mediaD=mejorD; mediaI=mejorI; mediaR=mejorR;
+for ejecucion in range(nEjecuciones-1):
+    D,V,I,R=algoritmo(opcion)
+    mediaD+=float(D); mediaI+=float(I); mediaR+=float(R);
+    dist.append(D)   # arrays para la desviacion estandar
+    iterac.append(I) #
+    reinic.append(R) #
+    if D < mejorD:
+        mejorD = D
+        mejorV = V
+        mejorI = I
+        mejorR = R
+    if D > peorD:
+        peorD = D
+
+print "-------- MEJOR SOLUCION --------"
+print "Distancia Minima:",mejorD
+print "Mejor solucion:",mejorV
+print "Mejor iteracion:",mejorI
+print "Numero reinicios:",mejorR
+mediaD/=nEjecuciones; mediaI/=nEjecuciones; mediaR/=nEjecuciones
+print "--------- ESTADISTICAS ---------"
+print "Distancia Maxima:",peorD
+print "Distancia Media:",mediaD
+#desviacion = math.sqrt((sum([x * x for x in dist]) / nEjecuciones) - (mediaD ** 2))
+#print "Distancia Desviacion:",desviacion
+print "Iteraciones Media:",mediaI
+#desviacion = math.sqrt((sum([x * x for x in iterac]) / nEjecuciones) - (mediaI ** 2))
+#print "Iteraciones Desviacion:",desviacion
+print "Reinicios Media:",mediaR
+#desviacion = math.sqrt((sum([x * x for x in reinic]) / nEjecuciones) - (mediaR ** 2))
+#print "Reinicios Desviacion",desviacion
