@@ -37,7 +37,7 @@ def leerAleatorios(hayFichero):
             aleatorios.append( 1 + int(math.floor(float(numero)*(n-1))) )
     else:
         for numero in range(0,10000):
-            aleatorios.append(random.random(1,n))
+            aleatorios.append(random.randrange(1,n))
 
 # calcula la distancia entre dos ciudades
 def calcularDistancia(ciudad1, ciudad2):
@@ -165,11 +165,12 @@ def algoritmo():
         tabu.append(getTerna(siguienteVecino,ciudad))
         print "TABU:",tabu,"\n"
     print "\nMejor distancia:",mejorDistancia
-    print "En la iteracion:",mejorI
+    print "\nMejor vecino:",mejorVecino
+    print "\nEn la iteracion:",mejorI
     print "Numero de reinicios:",nReinicios
 
 # Ejecucion
 leerfichero()
-leerAleatorios(True)
+leerAleatorios(False)
 solucionInicial = obtenerSolucionInicial()
 algoritmo()
