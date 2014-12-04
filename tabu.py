@@ -7,7 +7,7 @@ import math
 # Variables globales
 n = 100  # Numero de ciudades
 nEjecuciones = 10  # numero de ejecuciones del algoritmo
-nIteraciones = 100 # numero de iteraciones dentro del algoritmo
+nIteraciones = 10000 # numero de iteraciones dentro del algoritmo
 distancias = {}  # diccionario para guardar las distancias entre las ciudades cargado del fichero
 filein = "distancias_100ciudades.txt"
 filealeatorios = "aleatorios.txt"
