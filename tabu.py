@@ -79,8 +79,8 @@ def generarVecinos(tabu, ciudades, indice):
     for i in range(len(ciudades)):
         if i != indice:
             aux = operadorPosicion(ciudades, indice, i) 
-            if getTerna(aux, aux[indice]) not in tabu: # solo generamos los vecinos que no estan en la lista tabu
-                vecinos.append(aux)
+            if getTerna(aux, aux[i]) not in tabu: # solo generamos los vecinos que no estan en la lista tabu
+                vecinos.append([aux,i]) # guardo el vecino y el indice que lo genera
     return vecinos
 
 # obtener la solucion inicial con una estrategia voraz
@@ -140,37 +140,37 @@ def algoritmo():
         print "CIUDAD A CAMBIAR:",ciudad
         print "POSICIONES CONSIDERADAS: ",
         # primera posicion
-        menor = calcularDistanciaTotal(vecinos[0]);
+        menor = calcularDistanciaTotal(vecinos[0][0]);
         print "0",
-        siguienteVecino = list(vecinos[0])
-        solucionActual = list(vecinos[0])
+        siguienteVecino = list(vecinos[0][0])
+        solucionActual = list(vecinos[0][0])
         # siguientes posiciones
-        for j in range(1,len(vecinos)):
-            vecinoAux = vecinos[j]
-            dist = calcularDistanciaTotal(vecinoAux)
+        for vecinoAux in vecinos:
+            dist = calcularDistanciaTotal(vecinoAux[0])
             if dist < menor:
-                solucionActual = list(vecinoAux)
+                solucionActual = list(vecinoAux[0])
                 menor = dist
-                siguienteVecino = list(vecinoAux)
-                print j,
+                siguienteVecino = list(vecinoAux[0])
+                print vecinoAux[1], # el segundo campo guarda el indice que cambio
                 if dist < mejorDistancia: # cada 100 iteraciones compruebo si hay un vecino mejor
                     mejorDistancia = dist
                     mejorI = i+1 # mejor iteracion
-                    mejorVecino = list(vecinoAux)
+                    mejorVecino = list(vecinoAux[0])
                     contador100 = -1; # reinicio el contador
-                    print "\n========= RECORRIDO MEJOR SOLUCION GLOBAL =========\n"
+                    print "\n========= RECORRIDO MEJOR SOLUCION GLOBAL ========="
 
         print "\nSOLUCION ACTUAL: ",siguienteVecino
         print "DISTANCIA: ",menor
         tabu.append(getTerna(siguienteVecino,ciudad))
-        print "TABU:",tabu,"\n"
+        print "TABU:",tabu,"\n\n"
     print "\nMejor distancia:",mejorDistancia
     print "\nMejor vecino:",mejorVecino
     print "\nEn la iteracion:",mejorI
     print "Numero de reinicios:",nReinicios
+    return mejorDistancia,mejorVecino,mejorI,nReinicios
 
 # Ejecucion
 leerfichero()
-leerAleatorios(False)
+leerAleatorios(True)
 solucionInicial = obtenerSolucionInicial()
 algoritmo()
