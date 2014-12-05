@@ -35,8 +35,8 @@ def leerAleatorios(confichero):
             aleatorios.append( 1 + int(math.floor(float(numero)*(n-1))) )
         f.close()
     else:
-    	for numero in nIteraciones:
-    	aleatorios = random.sample(range(1,nIteraciones), n)
+    	for numero in range(0,nIteraciones):
+             aleatorios.append(random.randrange(1,n))
 
 # calcula la distancia entre dos ciudades
 def calcularDistancia(ciudad1, ciudad2):
