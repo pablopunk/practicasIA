@@ -22,7 +22,7 @@ def leerfichero():
         aux = linea.split()
         distancias[i] = aux
         i += 1
-    # print distancias
+    # print distancia
     f.close()
 
 # lectura del fichero de numeros aleatorios o generacion de los mismos
@@ -35,8 +35,8 @@ def leerAleatorios(confichero):
             aleatorios.append( 1 + int(math.floor(float(numero)*(n-1))) )
         f.close()
     else:
-        for numero in range(0,10000):
-            aleatorios.append(random.randrange(1,n))
+    	for numero in nIteraciones:
+    	aleatorios = random.sample(range(1,nIteraciones), n)
 
 # calcula la distancia entre dos ciudades
 def calcularDistancia(ciudad1, ciudad2):
@@ -120,7 +120,7 @@ def algoritmo(op):
     siguienteVecino = list(solucionActual)
     mejorVecino = list(solucionActual)
     mejorDistancia = calcularDistanciaTotal(solucionActual)
-    tabu = []; contador100 = -1; nReinicios = 0; mejorI = 0
+    tabu = []; contador100 = -1; nReinicios = 0; mejorI = 1
 
     #print "RECORRIDO INICIAL:",solucionActual
     #print "DISTANCIA:",mejorDistancia,"\n"
@@ -183,12 +183,11 @@ algoritmo(opcion)
 mejorD,mejorV,mejorI,mejorR=algoritmo(opcion)
 peorD = 0; dist = list(); iterac = list(); reinic = list()
 mediaD=mejorD; mediaI=mejorI; mediaR=mejorR;
+dist.append(mediaD); iterac.append(mediaI); reinic.append(mediaR)
 for ejecucion in range(nEjecuciones-1):
     D,V,I,R=algoritmo(opcion)
-    mediaD+=float(D); mediaI+=float(I); mediaR+=float(R);
-    dist.append(D)   # arrays para la desviacion estandar
-    iterac.append(I) #
-    reinic.append(R) #
+    mediaD+=float(D); mediaI+=float(I); mediaR+=float(R)
+    dist.append(D); iterac.append(I); reinic.append(R)
     if D < mejorD:
         mejorD = D
         mejorV = V
@@ -206,11 +205,24 @@ mediaD/=nEjecuciones; mediaI/=nEjecuciones; mediaR/=nEjecuciones
 print "--------- ESTADISTICAS ---------"
 print "Distancia Maxima:",peorD
 print "Distancia Media:",mediaD
-#desviacion = math.sqrt((sum([x * x for x in dist]) / nEjecuciones) - (mediaD ** 2))
-#print "Distancia Desviacion:",desviacion
+desviacion = 0
+varianza = (sum([x * x for x in dist]) / nEjecuciones) - (mediaD ** 2)
+if varianza <= 0:
+	desviacion = 0
+else:
+	desviacion = math.sqrt(varianza)
+print "Distancia Desviacion: %.2f" % desviacion
 print "Iteraciones Media:",mediaI
-#desviacion = math.sqrt((sum([x * x for x in iterac]) / nEjecuciones) - (mediaI ** 2))
-#print "Iteraciones Desviacion:",desviacion
+varianza = (sum([x * x for x in iterac]) / nEjecuciones) - (mediaD ** 2)
+if varianza <= 0:
+	desviacion = 0
+else:
+	desviacion = math.sqrt(varianza)
+print "Iteraciones Desviacion: %.2f" % desviacion
 print "Reinicios Media:",mediaR
-#desviacion = math.sqrt((sum([x * x for x in reinic]) / nEjecuciones) - (mediaR ** 2))
-#print "Reinicios Desviacion",desviacion
+varianza = (sum([x * x for x in reinic]) / nEjecuciones) - (mediaD ** 2)
+if varianza <= 0:
+	desviacion = 0
+else:
+	desviacion = math.sqrt(varianza)
+print "Reinicios Desviacion: %.2f" % desviacion
