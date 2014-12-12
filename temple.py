@@ -7,11 +7,14 @@ import math
 # Variables globales
 n = 100  # Numero de ciudades
 nEjecuciones = 10  # numero de ejecuciones del algoritmo
-nIteraciones = 10000 # numero de iteraciones dentro del algoritmo
+nIteraciones = 10 # numero de iteraciones dentro del algoritmo
 distancias = {}  # diccionario para guardar las distancias entre las ciudades cargado del fichero
-filein = "distancias_100ciudades.txt"
+filein = "distancias.txt"
 filealeatorios = "aleatorios.txt"
 aleatorios = [] # lista de indices aleatorios
+e=2.718281828459045 # numero de euler
+mu=0.03  # constantes para la formula
+phi=0.99 # 
 
 # lectura del fichero y carga de datos
 def leerfichero():
@@ -25,6 +28,14 @@ def leerfichero():
     # print distancia
     f.close()
 
+# siguiente numero aleatorio entero
+def siguienteIntAleatorio():
+    return 1+int(math.floor(aleatorios.pop(0)*(n-1)))
+
+# siguiente numero aleatorio entre 0 y 1
+def siguienteFloatAleatorio():
+    return aleatorios.pop(0)
+
 # lectura del fichero de numeros aleatorios o generacion de los mismos
 def leerAleatorios(confichero):
     global aleatorios
@@ -32,11 +43,11 @@ def leerAleatorios(confichero):
     if confichero:
         f = open(filealeatorios, "r")
         for numero in f.readlines(): # guardo los numeros truncados en el array
-            aleatorios.append( 1 + int(math.floor(float(numero)*(n-1))) )
+            aleatorios.append(float(numero))
         f.close()
     else:
     	for numero in range(0,nIteraciones):
-             aleatorios.append(random.randrange(1,n))
+            aleatorios.append(random.random())
 
 # calcula la distancia entre dos ciudades
 def calcularDistancia(ciudad1, ciudad2):
@@ -52,7 +63,7 @@ def calcularDistancia(ciudad1, ciudad2):
     return d
 
 # calcular la distancia total de una solucion
-def calcularDistanciaTotal(indices):
+def coste(indices):
     i = 0;
     total = 0;
     # sumo al total la distancia de 0 a 1
@@ -72,19 +83,9 @@ def operadorPosicion(lista, origen, destino):
     vecino.insert( destino , vecino.pop(origen) )
     return vecino
 
-# generar lista con los vecinos de una solucion
-def generarVecinos(tabu, ciudades, indice):
-    vecinos = []
-    for i in range(len(ciudades)):
-        if i != indice:
-            aux = operadorPosicion(ciudades, indice, i) 
-            if getTerna(aux, aux[i]) not in tabu: # solo generamos los vecinos que no estan en la lista tabu
-                vecinos.append([aux,i]) # guardo el vecino y el indice que lo genera
-    return vecinos
-
 # obtener la solucion inicial con una estrategia voraz
 def obtenerSolucionInicial():
-    solucionInicial = []
+    solucion = []
     menorD = 10000
     menorI = 0
 
@@ -93,29 +94,38 @@ def obtenerSolucionInicial():
         menorI = -1
         menorD = 1000000
         for j in range(1,n):
-            if j not in solucionInicial and actual!=j:
+            if j not in solucion and actual!=j:
                 d = calcularDistancia(actual,j)
                 if d < menorD:
                     menorD = d
                     menorI = j
-        solucionInicial.append(menorI)
-    return solucionInicial
-
-# devuelve la terna resultante del intercambio de una ciudad
-def getTerna(ciudades, ciudad):
-    posicion = ciudades.index(ciudad)
-    if posicion == 0:
-        return [0,ciudades[posicion],ciudades[posicion+1]]
-    elif posicion == n-2:
-        return [ciudades[posicion-1],ciudades[posicion],0]
-    else:
-        return [ciudades[posicion-1],ciudades[posicion],ciudades[posicion+1]]
+        solucion.append(menorI)
+    return solucion
 
 # algoritmo de busqueda tabu
 def algoritmo():
-    solucionActual = obtenerSolucionInicial()
-    
+    recorridoActual = obtenerSolucionInicial()
+    costeActual = coste(recorridoActual)
+    Tactual = (mu / -math.log(phi,e)) * costeActual
+
+    print "RECORRIDO INICIAL\n",recorridoActual
+    print "FUNCION OBJETIVO:",costeActual
+    print "TEMPERATURA:",Tactual,"\n"
+
+    for iteracion in range(nIteraciones):
+        ciudad = siguienteIntAleatorio()
+        indice = siguienteIntAleatorio()-1
+        print "ITERACION:",iteracion+1
+        print "RANDOM CIUDAD:",ciudad,"| RANDOM INDICE INSERCION:",indice,"\n"
+        recorridoNuevo = operadorPosicion(recorridoActual,recorridoActual.index(ciudad), indice)
+        costeNuevo = coste(recorridoNuevo)
+        delta = costeNuevo - costeActual
+        aleatorio = siguienteFloatAleatorio()
+        print recorridoNuevo
+        print "DELTA:",delta
+        print "RANDOM U[0, 1):",aleatorio 
 
 # Ejecucion
 leerfichero()
+leerAleatorios(1)
 algoritmo()
