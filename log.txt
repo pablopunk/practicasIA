@@ -1,1 +1,0 @@
-Desea usar el archivo 'aleatorios.txt'? (s/n):  
