@@ -36,18 +36,22 @@ def siguienteIntAleatorio():
 def siguienteFloatAleatorio():
     return aleatorios.pop(0)
 
-# lectura del fichero de numeros aleatorios o generacion de los mismos
-def leerAleatorios(confichero):
+# lectura del fichero de aleatorios
+def leerAleatorios():
     global aleatorios
     aleatorios = list() # reinicio la lista por si ya estaba llena
-    if confichero:
-        f = open(filealeatorios, "r")
-        for numero in f.readlines(): # guardo los numeros truncados en el array
-            aleatorios.append(float(numero))
-        f.close()
-    else:
-    	for numero in range(0,nIteraciones):
-            aleatorios.append(random.random())
+
+    f = open(filealeatorios, "r")
+    for numero in f.readlines(): # guardo los numeros truncados en el array 
+        aleatorios.append(float(numero))
+    f.close()
+
+# generacion de numeros aleatorios
+def generarAleatorios():
+    global aleatorios
+    aleatorios = list()
+    for i in range(nIteraciones*4):
+        aleatorios.append(random.random())
 
 # calcula la distancia entre dos ciudades
 def calcularDistancia(ciudad1, ciudad2):
@@ -122,7 +126,7 @@ def algoritmo():
         while destino == origen: # cojo el siguiente destino pero que no sea el mismo de la ciudad
             destino = siguienteIntAleatorio()-1
         print "ITERACION:",iteracion+1
-        print "RANDOM CIUDAD:",ciudad,"| RANDOM destino INSERCION:",destino,"\n"
+        print "RANDOM CIUDAD:",ciudad,"| RANDOM INDICE INSERCION:",destino,"\n"
         recorridoNuevo = operadorPosicion(recorridoActual,origen,destino)
         costeNuevo = coste(recorridoNuevo)
         delta = costeNuevo - costeActual
@@ -151,7 +155,10 @@ def algoritmo():
             Tnuevo = T0 / (nEnfriamientos+1)
             print "TEMPERATURA:",Tnuevo
         contador80+=1; print "\n"
+    print "MEJOR SOLUCION:",mejorSolucion
+    print "MEJOR DISTANCIA:",mejorDistancia
+    print "MEJOR ITERACION:",mejorIteracion
 # Ejecucion
 leerfichero()
-leerAleatorios(1)
+generarAleatorios()
 algoritmo()
