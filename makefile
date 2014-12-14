@@ -1,2 +1,2 @@
 all:
-	pypy temple.py
+	python temple.py

@@ -3,7 +3,6 @@
 # Bibliotecas
 import random
 import math
-import numpypy
 import numpy
 
 # Variables globales
