@@ -14,7 +14,7 @@ distancias = {}  # diccionario para guardar las distancias entre las ciudades ca
 filein = "distancias.txt"
 filealeatorios = "aleatorios.txt"
 aleatorios = [] # lista de indices aleatorios
-mu=0.03  # constantes para la formula
+mu=0.25  # constantes para la formula
 phi=0.99 # 
 
 # lectura del fichero y carga de datos
