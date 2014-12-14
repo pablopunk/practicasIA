@@ -3,6 +3,7 @@
 # Bibliotecas
 import random
 import math
+import numpypy
 import numpy
 
 # Variables globales
@@ -111,13 +112,13 @@ def algoritmo():
     recorridoActual = obtenerSolucionInicial()
     costeActual = coste(recorridoActual)
     mejorSolucion = list(recorridoActual)
-    mejorIteracion = 0; mejorDistancia = costeActual
+    mejorIteracion = 0; mejorDistancia = costeActual; aceptadas=0
     T0 = (mu / -math.log1p(phi-1)) * costeActual
     Tnuevo = T0
     contador80=1; contador20=0; nEnfriamientos=0
-    print "RECORRIDO INICIAL\n",recorridoActual
-    print "FUNCION OBJETIVO:",costeActual
-    print "TEMPERATURA:",T0,"\n"
+    #print "RECORRIDO INICIAL\n",recorridoActual
+    #print "FUNCION OBJETIVO:",costeActual
+    #print "TEMPERATURA:",T0,"\n"
 
     for iteracion in range(nIteraciones):
         ciudad = siguienteIntAleatorio()
@@ -125,40 +126,43 @@ def algoritmo():
         destino = siguienteIntAleatorio()-1
         while destino == origen: # cojo el siguiente destino pero que no sea el mismo de la ciudad
             destino = siguienteIntAleatorio()-1
-        print "ITERACION:",iteracion+1
-        print "RANDOM CIUDAD:",ciudad,"| RANDOM INDICE INSERCION:",destino,"\n"
+        #print "ITERACION:",iteracion+1
+        #print "RANDOM CIUDAD:",ciudad,"| RANDOM INDICE INSERCION:",destino,"\n"
         recorridoNuevo = operadorPosicion(recorridoActual,origen,destino)
         costeNuevo = coste(recorridoNuevo)
         delta = costeNuevo - costeActual
         aleatorio = siguienteFloatAleatorio()
-        print recorridoNuevo
-        print "FUNCION OBJETIVO:",costeNuevo
-        print "DELTA:",delta
-        print "RANDOM U[0, 1):",aleatorio
+        #print recorridoNuevo
+        #print "FUNCION OBJETIVO:",costeNuevo
+        #print "DELTA:",delta
+        #print "RANDOM U[0, 1):",aleatorio
         if (delta < 0) or (aleatorio < math.exp(-delta/Tnuevo)):
             recorridoActual = list(recorridoNuevo)
             costeActual = costeNuevo
-            print "SOLUCION CANDIDATA ACEPTADA"
-            contador20+=1
+            #print "SOLUCION CANDIDATA ACEPTADA"
+            contador20+=1; aceptadas+=1
             if costeActual < mejorDistancia:
                 mejorIteracion = iteracion+1
                 mejorDistancia = costeActual
                 mejorSolucion = list(recorridoActual)
         if contador80>=80 or contador20>=20:
-            print "** VELOCIDAD DE ENFRIAMIENTO ALCANZADA **"
-            print "CANDIDATAS",contador80,"| ACEPTADAS",contador20
+            #print "** VELOCIDAD DE ENFRIAMIENTO ALCANZADA **"
+            #print "CANDIDATAS",contador80,"| ACEPTADAS",contador20
             nEnfriamientos+=1
-            print "================="
-            print "ENFRIAMIENTO:",nEnfriamientos
-            print "================="
-            contador80=0; contador20=0
+            #print "================="
+            #print "ENFRIAMIENTO:",nEnfriamientos
+            #print "================="
+            contador80=0; contador20=0;
             Tnuevo = T0 / (nEnfriamientos+1)
-            print "TEMPERATURA:",Tnuevo
-        contador80+=1; print "\n"
-    print "MEJOR SOLUCION:",mejorSolucion
-    print "MEJOR DISTANCIA:",mejorDistancia
-    print "MEJOR ITERACION:",mejorIteracion
+            #print "TEMPERATURA:",Tnuevo
+        contador80+=1; #print "\n"
+    return aceptadas
 # Ejecucion
 leerfichero()
-generarAleatorios()
-algoritmo()
+aceptadas = []
+for i in range(nEjecuciones):
+    generarAleatorios()
+    aceptadas.append(algoritmo())
+print "--- CANDIDATAS ACEPTADAS ---"
+print "media:",numpy.mean(aceptadas)
+print "desviacion:",numpy.std(aceptadas)
