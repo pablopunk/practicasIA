@@ -156,13 +156,16 @@ def algoritmo():
             Tnuevo = T0 / (nEnfriamientos+1)
             #print "TEMPERATURA:",Tnuevo
         contador80+=1; #print "\n"
-    return aceptadas
+    return mejorSolucion,aceptadas
 # Ejecucion
 leerfichero()
-aceptadas = []
+aceptadas = []; mejor = []
 for i in range(nEjecuciones):
     generarAleatorios()
-    aceptadas.append(algoritmo())
+    mejor,ac=algoritmo()
+    aceptadas.append(ac)
 print "--- CANDIDATAS ACEPTADAS ---"
 print "media:",numpy.mean(aceptadas)
 print "desviacion:",numpy.std(aceptadas)
+print "--- MEJOR SOLUCION ---"
+print "distancia:",coste(mejor)
