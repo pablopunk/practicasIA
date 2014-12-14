@@ -1,2 +1,1 @@
-- La traza es correcta hasta la iteracion 25, que acepta pero no deberia
-    - Mirar si la Tactual se usa para la iteracion actual o para la siguiente
+- Comprobar 10 ejecuciones aleatorias  

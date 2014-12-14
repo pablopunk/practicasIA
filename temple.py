@@ -140,7 +140,6 @@ def algoritmo():
                 mejorIteracion = iteracion+1
                 mejorDistancia = costeActual
                 mejorSolucion = list(recorridoActual)
-        Tnuevo = (mu / -numpy.log1p(phi-1)) * costeNuevo
         if contador80>=80 or contador20>=20:
             print "** VELOCIDAD DE ENFRIAMIENTO ALCANZADA **"
             print "CANDIDATAS",contador80,"| ACEPTADAS",contador20
