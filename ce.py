@@ -1,16 +1,16 @@
 #!/usr/bin/env python
 
 # Bibliotecas de python
-import random   # numeros aleatorios
+import random   # numeros aleatorios
 import math     # operaciones matematicas
-import numpy    # otras operaciones matematicas
+#import numpy    # otras operaciones matematicas
 
 # Variables globales
 nCiudades = 10  # Numero de ciudades
 nPoblacion= 100 # Numero de soluciones en una poblacion
 Pc = 0.9        # Probabilidad de cruce
 Pm = 0.01       # Probabilidad de mutacion
-distancias = {} # Diccionario de distancias
+distancias = {} # Diccionario de distancias
 filedistancias = "distancias.txt"   # 
 filealeatorios = "aleatorios.txt"   # Archivos
 aleatorios = [] # lista de numeros aleatorios
@@ -41,6 +41,21 @@ def leerAleatorios():
         aleatorios.append(float(numero))
     f.close()
 
+# siguiente numero aleatorio para el torneo
+def torneoAleatorio():
+    global aleatorios
+    return int(round(aleatorios.pop(0)*(nPoblacion-1)))
+
+# siguiente numero aleatorio entero
+def ciudadAleatoria():
+    global aleatorios
+    return int(round(aleatorios.pop(0)*(nCiudades-2)+1))
+
+# siguiente numero aleatorio entre 0 y 1
+def floatAleatorio():
+    global aleatorios
+    return aleatorios.pop(0)
+
 # calcular la distancia entre dos ciudades
 def calcularDistancia(ciudad1, ciudad2):
     d = 0
@@ -62,7 +77,7 @@ def coste(indices):
     aux = distancias[indices[0]]
     total += int(aux[0])
     # sumo al total la distancia de 0 a n-1
-    aux = distancias[indices[n - 2]]
+    aux = distancias[indices[nCiudades - 2]]
     total += int(aux[0])
 
     for i in range(len(indices) - 1):
@@ -73,6 +88,26 @@ def coste(indices):
 def mutar(lista, a, b):
     lista[a], lista[b] = lista[b], lista[a] # intercambia los elementos
 
+# obtener solucion aleatoria
+def obtenerSolucionAleatoria():
+    camino = []
+    a = 0; i=0
+    for i in range(nCiudades-1):
+        a = ciudadAleatoria()
+        while a in camino:
+            a = ciudadAleatoria()
+        camino.append(a);
+    imprimirLista(camino)
+
+# obtener solucion voraz
+def obtenerSolucionVoraz():
+    print "-> Aun no implementado"
+    return
+
 # obtener la solucion inicial (mitad voraz, mitad aleatoria)
+def obtenerSolucionInicial():
+    for i in range(nPoblacion/2):
+        obtenerSolucionAleatoria()
 
-
+leerAleatorios()
+obtenerSolucionInicial()
