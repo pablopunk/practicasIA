@@ -41,6 +41,14 @@ def leerAleatorios():
         aleatorios.append(float(numero))
     f.close()
 
+# generacion de numeros aleatorios
+def generarAleatorios():
+    global aleatorios
+    aleatorios = list()
+    print " -> Implementar generacion aleatoria"
+    #for i in range(nIteraciones*4):
+    #    aleatorios.append(random.random())
+
 # siguiente numero aleatorio para el torneo
 def torneoAleatorio():
     global aleatorios
@@ -97,17 +105,41 @@ def obtenerSolucionAleatoria():
         while a in camino:
             a = ciudadAleatoria()
         camino.append(a);
-    imprimirLista(camino)
+    return camino
 
 # obtener solucion voraz
 def obtenerSolucionVoraz():
-    print "-> Aun no implementado"
-    return
+    camino = [] 
+    actual = ciudadAleatoria(); menorD = 10000; menorI = 0
+    camino.append(actual) # la primera ciudad es aleatoria
+    for i in range(1,nCiudades-1):
+        for j in range(1,nCiudades):
+            if j not in camino and actual!=j:
+                d = calcularDistancia(actual,j)
+                if d < menorD:
+                    menorD = d; menorI = j
+        camino.append(menorI)
+        actual = menorI;  menorI = -1; menorD = 1000000
+    return camino
 
 # obtener la solucion inicial (mitad voraz, mitad aleatoria)
 def obtenerSolucionInicial():
-    for i in range(nPoblacion/2):
-        obtenerSolucionAleatoria()
+    solucionInicial = []
+    for i in range(nPoblacion/2): # soluciones aleatorias
+        solucionInicial.append(obtenerSolucionAleatoria())
+    for i in range(nPoblacion/2): # soluciones voraces
+        solucionInicial.append(obtenerSolucionVoraz())
+    print "POBLACION INICIAL"
+    for i in range(len(solucionInicial)): # imprimir poblacion
+        s = solucionInicial[i];  d = str(coste(s))
+        print "INDIVIDUO",i,"= {OBJETIVO:",d+",","CAMINO:",
+        imprimirLista(s),"}"
+    return solucionInicial
 
+# cuerpo principal del algoritmo
+def algoritmo():
+    return
+
+leerDistancias()
 leerAleatorios()
 obtenerSolucionInicial()
