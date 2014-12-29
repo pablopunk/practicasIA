@@ -1,0 +1,65 @@
+1. Fichero trazaTSP_CE_10.txt
+
+Contiene la traza de ejecución del caso de uso de 10 CIUDADES, para los números aleatorios del fichero que se acompaña. Al ser 10 ciudades consideradas, el rango de los valores de las permutaciones es 1..9. Esto es únicamente a efectos de simplificar el análisis de la traza, ya que el ejercicio debe resolverse con 100 ciudades.
+
+
+El caso de uso se ha construido siguiendo estrictamente el orden de operaciones indicado en el enunciado de la práctica:
+
+1. generación de la población inicial: 50 soluciones totalmente aleatorias (50%) seguidas de 50 voraces (con el primer índice de la permutación aleatorio)
+
+2. selección por torneo binario. Se realizarán 100 torneos para generar una población descendiente de tamaño N=100.
+
+3. cruce: valor de probabilidad de la operación. Si se da, cruce por order crossover: se seleccionan 2 índices en el rango 0..8 (que pueden coincidir).
+
+4. mutación: valor de probabilidad de la operación. Si se da, mutación por intercambio entre dos genes de la misma solución: se seleccionan dos índices en el rango 0..8, que pueden coincidir o que pueden deshacer mutaciones anteriores. 
+
+************************
+**NOTA IMPORTANTE:** Para ordenar la población por fitness se utiliza el algoritmo timsort (implementado por defecto para ordenación de objetos en Java/Python, desde la versión 7.0). Esta información es relevante, puesto que en caso de empate a fitness, el uso de otros algortimos de ordenación puede dar resultados diferentes a los de la traza.
+*************************
+
+En el fichero se muestra la siguiente información:
+
+- POBLACIÓN INICIAL: 100 recorridos de inicialización, 50 de ellos generados de forma totalmente aleatoria y 50 mediante estrategia voraz. Se incluye el recorrido y la distancia.
+
+- valores aleatorios de los índices seleccionados para el torneo (posición en la población, no índice de ciudad) y resultado de los torneos
+
+- valores de probabilidad para el cruce. En caso de cruce, se indican los índices de los individuos de la población seleccionada tras el torneo, que serán cruzados con el operador order crossover. Dichos índices son una secuencia de pares en el rango [0,99]. Por último, se presentan los valores aleatorios del segmento de cruce (valores en 0..8, puesto que son índices de las ciudades).
+
+- valores de probabilidad de mutación y resultado de la misma. En caso de mutación se indica el índice de la ciudad con que se intercambia cada alelo (valores en el rango 0..8).
+
+- población tras el reemplazo: Los primeros N-2 individuos corresponden a la población descendiente y están ordenados por fitness. Los dos últimos individuos son los individuos de mejor fitness de la población original (que se conservan por elitismo)
+
+
+* ÚLTIMAS LÍNEAS
+- resumen general de la ejecución: 
+distancia mejor resultado, iteración en que se obtiene
+
+
+2. Fichero randomTSP_CE_10.txt
+
+Contiene números aleatorios enteros p en el rango [0, 1), que se usarán para:
+- generación de valores de ciudades en la inicialización [int rango 1-9]
+- generación de índices de soluciones en la población [int rango 0-99] para la selección por torneo 
+- valores de probabilidad de cruce y mutación [double rango 0-1)
+- índices de ciudades para las operaciones de cruce y mutación [int rango 0-8]
+
+Al igual que en la práctica anterior, es preciso realizar las transformaciones correspondientes del rango aleatorio [0, 1) al correspondiente en cada caso (con el redondeo correspondiente):
+
+- [---RANDOM_CIUDAD]: round(p*8+1) -> [int rango 1-9]
+- [---TORNEO-]: round(p*99) -> [int rango 0-99]
+- [---PROB. CRUCE/MUTACIÓN]: uso directo, sin transformación
+- [---CRUCE. CORTE/MUTAC. ÍNDICE INTERCAMBIO]: round(p*8) -> [int rango 0-8]
+
+En el problema real con 100 ciudades y población tamaño 100 las transformaciones correspondientes serán análogas:
+
+- [---RANDOM_CIUDAD]: round(p*98+1) -> [int rango 1-99]
+- [---TORNEO-]: round(p*99) -> [int rango 0-99]
+- [---PROB. CRUCE/MUTACIÓN]: uso directo, sin transformación
+- [---CRUCE. CORTE/MUTAC. ÍNDICE INTERCAMBIO]: round(p*98) -> [int rango 0-98]
+
+
+El orden de los números aleatorios es fundamental para interpretar correctamente su uso, por lo que se recomienda seguir la traza paso a paso. 
+
+Las operaciones que precisan números aleatorios siguen un patrón irregular. Por ejemplo, si para un valor de probabilidad de cruce la operación de cruce se realiza, los dos números siguientes corresponderán a los índices de las ciudades que se intercambian. Pero si la operación de cruce no se realiza el siguiente valor corresponderá típicamente al valor de probabilidad de la siguiente operación de cruce. 
+
+
