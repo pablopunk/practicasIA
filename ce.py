@@ -20,7 +20,6 @@ def imprimirLista(lista):
     print "0", # el 0 siempre es la primera ciudad
     for i in lista:
         print i,
-    print "" # salto de linea al final
 
 # lectura del fichero de distancias
 def leerDistancias():
@@ -123,23 +122,79 @@ def obtenerSolucionVoraz():
     return camino
 
 # obtener la solucion inicial (mitad voraz, mitad aleatoria)
-def obtenerSolucionInicial():
-    solucionInicial = []
+def obtenerpoblacioninicial():
+    poblacioninicial = []
     for i in range(nPoblacion/2): # soluciones aleatorias
-        solucionInicial.append(obtenerSolucionAleatoria())
+        poblacioninicial.append(obtenerSolucionAleatoria())
     for i in range(nPoblacion/2): # soluciones voraces
-        solucionInicial.append(obtenerSolucionVoraz())
+        poblacioninicial.append(obtenerSolucionVoraz())
     print "POBLACION INICIAL"
-    for i in range(len(solucionInicial)): # imprimir poblacion
-        s = solucionInicial[i];  d = str(coste(s))
+    for i in range(len(poblacioninicial)): # imprimir poblacion
+        s = poblacioninicial[i];  d = str(coste(s))
         print "INDIVIDUO",i,"= {OBJETIVO:",d+",","CAMINO:",
-        imprimirLista(s),"}"
-    return solucionInicial
+        imprimirLista(s); print "}"
+    return poblacioninicial
+
+# Operador de cruce: crossover
+def cruce(padre, madre):
+    i1 = ciudadAleatoria()-1
+    i2 = ciudadAleatoria()-1
+    print "CORTES:",i1,i2
+    hijo = [0]*(nCiudades-1) # inicia el hijo con el mismo valor en todo el array
+    if i1 < i2: i2 += 1     # normaliza: i1 siempre es menor que i2
+    else: i1, i2 = i2, i1+1 # 
+    hijo[i1:i2] = padre[i1:i2] # relleno el segmento en el hijo
+    tam = nCiudades-(i2-i1)-1; # cuantos faltan para rellenar el hijo
+    x=i2; y=i2
+    for it in range(tam):
+        if x == nCiudades-1: x=0 # empiezo desde el principio
+        if y == nCiudades-1: y=0
+        elem = madre[y]; y+=1
+        if y == nCiudades-1: y=0
+        while elem in hijo: # comprueba si esta ya en el hijo
+            elem = madre[y]; y+=1;
+            if y == nCiudades-1: y=0
+        hijo[x] = elem; x+=1 # y lo introduce en el hijo
+    return hijo
 
 # cuerpo principal del algoritmo
 def algoritmo():
-    return
-
+    poblacionactual = obtenerpoblacioninicial()
+    for i in range(1):
+        print "\nITERACION:",i+1
+        print "\nSELECCION"
+        for ntorneo in range(100): # TORNEO
+            menor = 0
+            candidato1 = torneoAleatorio(); candidato2 = torneoAleatorio()
+            coste1 = coste(poblacionactual[candidato1]); coste2 = coste(poblacionactual[candidato2])
+            if coste1 <= coste2:
+                menor = candidato1
+            else:
+                menor = candidato2
+            print "\tTORNEO %i:" % ntorneo,candidato1,candidato2,"GANA",menor
+        print "\nCRUCE"
+        for ncruce in range(0,len(poblacionactual),2): # de 2 en 2
+            aleatorio = floatAleatorio()
+            print "\tCRUCE:",ncruce,ncruce+1,"(ALEATORIO: %.6f)"%aleatorio,
+            if aleatorio>Pc:
+                print "NO SE CRUZA"
+            else:
+                ##### FALTA HACER EL CRUCE
+                cruce(poblacionactual[ncruce], poblacionactual[ncruce+1])
+        print "\nMUTACION"
+        for ind in range(nPoblacion):
+            print "\tINDIVIDUO",ind
+            individuo = poblacionactual[ind]
+            for pos in range(len(individuo)):
+                aleatorio = floatAleatorio()
+                print "\t\tPOSICION:",pos,"(ALEATORIO %.6f) "%aleatorio,
+                if aleatorio > Pm:
+                    print "NO MUTA"
+                else:
+                    mutacion = ciudadAleatoria()-1
+                    print "INTERCAMBIO CON:", mutacion
+                    ####### FALTA HACER LA MUTACION
 leerDistancias()
 leerAleatorios()
-obtenerSolucionInicial()
+algoritmo()
+
