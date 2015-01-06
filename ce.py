@@ -94,6 +94,7 @@ def coste(indices):
 # el operador con el cual muta una solucion
 def mutar(lista, a, b):
     lista[a], lista[b] = lista[b], lista[a] # intercambia los elementos
+    return lista
 
 # obtener solucion aleatoria
 def obtenerSolucionAleatoria():
@@ -136,10 +137,7 @@ def obtenerpoblacioninicial():
     return poblacioninicial
 
 # Operador de cruce: crossover
-def cruce(padre, madre):
-    i1 = ciudadAleatoria()-1
-    i2 = ciudadAleatoria()-1
-    print "CORTES:",i1,i2
+def cruce(padre, madre, i1, i2):
     hijo = [0]*(nCiudades-1) # inicia el hijo con el mismo valor en todo el array
     if i1 < i2: i2 += 1     # normaliza: i1 siempre es menor que i2
     else: i1, i2 = i2, i1+1 # 
@@ -157,14 +155,24 @@ def cruce(padre, madre):
         hijo[x] = elem; x+=1 # y lo introduce en el hijo
     return hijo
 
+# mecanismo de reemplazo de una poblacion a otra
+def reemplazo(vieja, intermedia):
+    vieja = sorted(vieja, key=coste)
+    intermedia = sorted(intermedia, key=coste)
+    intermedia[nPoblacion-1] = vieja[1]
+    intermedia[nPoblacion-2] = vieja[0]
+    return intermedia
+
 # cuerpo principal del algoritmo
 def algoritmo():
     poblacionactual = obtenerpoblacioninicial()
-    for i in range(1):
+    poblacionintermedia = []
+    for i in range(3): # numero de iteraciones
+        poblacionintermedia = [] # resetea la pob intermedia
         print "\nITERACION:",i+1
         print "\nSELECCION"
-        for ntorneo in range(100): # TORNEO
-            menor = 0
+        for ntorneo in range(nPoblacion): # TORNEO
+            menor = 0;
             candidato1 = torneoAleatorio(); candidato2 = torneoAleatorio()
             coste1 = coste(poblacionactual[candidato1]); coste2 = coste(poblacionactual[candidato2])
             if coste1 <= coste2:
@@ -172,6 +180,7 @@ def algoritmo():
             else:
                 menor = candidato2
             print "\tTORNEO %i:" % ntorneo,candidato1,candidato2,"GANA",menor
+            poblacionintermedia.append(poblacionactual[menor])
         print "\nCRUCE"
         for ncruce in range(0,len(poblacionactual),2): # de 2 en 2
             aleatorio = floatAleatorio()
@@ -179,12 +188,20 @@ def algoritmo():
             if aleatorio>Pc:
                 print "NO SE CRUZA"
             else:
-                ##### FALTA HACER EL CRUCE
-                cruce(poblacionactual[ncruce], poblacionactual[ncruce+1])
+                # CRUCE
+                padre = poblacionintermedia[ncruce]
+                madre = poblacionintermedia[ncruce+1]
+                i1 = ciudadAleatoria()-1
+                i2 = ciudadAleatoria()-1
+                print "CORTES:",i1,i2
+                hijo = cruce(padre, madre, i1, i2)
+                hija = cruce(madre, padre, i1, i2)
+                poblacionintermedia[ncruce] = list(hijo)
+                poblacionintermedia[ncruce+1] = list(hija)
         print "\nMUTACION"
         for ind in range(nPoblacion):
             print "\tINDIVIDUO",ind
-            individuo = poblacionactual[ind]
+            individuo = poblacionintermedia[ind]
             for pos in range(len(individuo)):
                 aleatorio = floatAleatorio()
                 print "\t\tPOSICION:",pos,"(ALEATORIO %.6f) "%aleatorio,
@@ -193,7 +210,16 @@ def algoritmo():
                 else:
                     mutacion = ciudadAleatoria()-1
                     print "INTERCAMBIO CON:", mutacion
-                    ####### FALTA HACER LA MUTACION
+                    # MUTACION
+                    otro = poblacionintermedia[ind][mutacion]
+                    poblacionintermedia[ind][mutacion] = poblacionintermedia[ind][pos]
+                    poblacionintermedia[ind][pos] = otro
+        print "REEMPLAZO"
+        poblacionactual = reemplazo(poblacionactual, poblacionintermedia)
+        for ind in range(nPoblacion):
+            individuo = poblacionactual[ind]
+            print "INDIVIDUO",ind,"= {OBJETIVO: %i," % coste(individuo),"CAMINO:",
+            imprimirLista(individuo); print "}"
 leerDistancias()
 leerAleatorios()
 algoritmo()
