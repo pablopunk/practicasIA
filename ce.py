@@ -167,7 +167,7 @@ def reemplazo(vieja, intermedia):
 def algoritmo():
     poblacionactual = obtenerpoblacioninicial()
     poblacionintermedia = []
-    for i in range(3): # numero de iteraciones
+    for i in range(1000): # numero de iteraciones
         poblacionintermedia = [] # resetea la pob intermedia
         print "\nITERACION:",i+1
         print "\nSELECCION"
@@ -180,9 +180,9 @@ def algoritmo():
             else:
                 menor = candidato2
             print "\tTORNEO %i:" % ntorneo,candidato1,candidato2,"GANA",menor
-            poblacionintermedia.append(poblacionactual[menor])
+            poblacionintermedia.append(list(poblacionactual[menor]))
         print "\nCRUCE"
-        for ncruce in range(0,len(poblacionactual),2): # de 2 en 2
+        for ncruce in range(0,nPoblacion,2): # de 2 en 2
             aleatorio = floatAleatorio()
             print "\tCRUCE:",ncruce,ncruce+1,"(ALEATORIO: %.6f)"%aleatorio,
             if aleatorio>Pc:
@@ -200,8 +200,8 @@ def algoritmo():
                 poblacionintermedia[ncruce+1] = list(hija)
         print "\nMUTACION"
         for ind in range(nPoblacion):
-            print "\tINDIVIDUO",ind
             individuo = poblacionintermedia[ind]
+            print "\tINDIVIDUO",ind
             for pos in range(len(individuo)):
                 aleatorio = floatAleatorio()
                 print "\t\tPOSICION:",pos,"(ALEATORIO %.6f) "%aleatorio,
@@ -211,9 +211,7 @@ def algoritmo():
                     mutacion = ciudadAleatoria()-1
                     print "INTERCAMBIO CON:", mutacion
                     # MUTACION
-                    otro = poblacionintermedia[ind][mutacion]
-                    poblacionintermedia[ind][mutacion] = poblacionintermedia[ind][pos]
-                    poblacionintermedia[ind][pos] = otro
+                    poblacionintermedia[ind][mutacion],poblacionintermedia[ind][pos] = poblacionintermedia[ind][pos], poblacionintermedia[ind][mutacion]
         print "REEMPLAZO"
         poblacionactual = reemplazo(poblacionactual, poblacionintermedia)
         for ind in range(nPoblacion):
