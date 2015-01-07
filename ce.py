@@ -14,6 +14,7 @@ distancias = {} # Diccionario de distancias
 filedistancias = "distancias.txt"   # 
 filealeatorios = "aleatorios.txt"   # Archivos
 aleatorios = [] # lista de numeros aleatorios
+cuentaAleatorios = 0
 
 # imprimir una lista sin comas ni nada
 def imprimirLista(lista):
@@ -50,18 +51,24 @@ def generarAleatorios():
 
 # siguiente numero aleatorio para el torneo
 def torneoAleatorio():
-    global aleatorios
-    return int(round(aleatorios.pop(0)*(nPoblacion-1)))
+    global aleatorios,cuentaAleatorios
+    al = int(round(aleatorios[cuentaAleatorios]*(nPoblacion-1)))
+    cuentaAleatorios+=1
+    return al
 
 # siguiente numero aleatorio entero
 def ciudadAleatoria():
-    global aleatorios
-    return int(round(aleatorios.pop(0)*(nCiudades-2)+1))
+    global aleatorios,cuentaAleatorios
+    al = int(round(aleatorios[cuentaAleatorios]*(nCiudades-2)+1))
+    cuentaAleatorios+=1
+    return al
 
 # siguiente numero aleatorio entre 0 y 1
 def floatAleatorio():
-    global aleatorios
-    return aleatorios.pop(0)
+    global aleatorios,cuentaAleatorios
+    al = aleatorios[cuentaAleatorios]
+    cuentaAleatorios+=1
+    return al
 
 # calcular la distancia entre dos ciudades
 def calcularDistancia(ciudad1, ciudad2):

@@ -1,2 +1,2 @@
 all:
-	python ce.py > traza.txt && diff traza.txt traza_clase.txt > diferencia.txt
+	date; python ce.py > traza.txt; date && diff traza.txt traza_clase.txt > diferencia.txt
