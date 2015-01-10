@@ -3,6 +3,8 @@
 # Bibliotecas de python
 import random   # numeros aleatorios
 import math     # operaciones matematicas
+import sys      # para los argumentos
+import numpy    # operaciones matematicas
 
 # Variables globales
 nCiudades = 100  # Numero de ciudades
@@ -11,7 +13,7 @@ Pc = 0.9        # Probabilidad de cruce
 Pm = 0.01       # Probabilidad de mutacion
 distancias = {} # Diccionario de distancias
 filedistancias = "n100/distancias.txt"   # 
-filealeatorios = "n100/aleatorios.txt"   # Archivos
+filealeatorios = "aleatorios.txt"   # Archivos
 aleatorios = [] # lista de numeros aleatorios
 cuentaAleatorios = 0
 
@@ -44,13 +46,14 @@ def leerAleatorios():
 def generarAleatorios():
     global aleatorios
     aleatorios = list()
-    print " -> Implementar generacion aleatoria"
-    #for i in range(nIteraciones*4):
-    #    aleatorios.append(random.random())
+    for i in range(2000000):
+        aleatorios.append(random.random())
 
 # siguiente numero aleatorio para el torneo
 def torneoAleatorio():
     global aleatorios,cuentaAleatorios
+    if cuentaAleatorios >= len(aleatorios):
+        cuentaAleatorios=0
     al = int(round(aleatorios[cuentaAleatorios]*(nPoblacion-1)))
     cuentaAleatorios+=1
     return al
@@ -58,6 +61,8 @@ def torneoAleatorio():
 # siguiente numero aleatorio entero
 def ciudadAleatoria():
     global aleatorios,cuentaAleatorios
+    if cuentaAleatorios >= len(aleatorios):
+        cuentaAleatorios=0
     al = int(round(aleatorios[cuentaAleatorios]*(nCiudades-2)+1))
     cuentaAleatorios+=1
     return al
@@ -65,6 +70,8 @@ def ciudadAleatoria():
 # siguiente numero aleatorio entre 0 y 1
 def floatAleatorio():
     global aleatorios,cuentaAleatorios
+    if cuentaAleatorios >= len(aleatorios):
+        cuentaAleatorios=0
     al = aleatorios[cuentaAleatorios]
     cuentaAleatorios+=1
     return al
@@ -135,11 +142,11 @@ def obtenerpoblacioninicial():
         poblacioninicial.append(obtenerSolucionAleatoria())
     for i in range(nPoblacion/2): # soluciones voraces
         poblacioninicial.append(obtenerSolucionVoraz())
-    print "POBLACION INICIAL"
+    #print "POBLACION INICIAL"
     for i in range(len(poblacioninicial)): # imprimir poblacion
         s = poblacioninicial[i];  d = str(coste(s))
-        print "INDIVIDUO",i,"= {OBJETIVO:",d+",","CAMINO:",
-        imprimirLista(s); print "}"
+        #print "INDIVIDUO",i,"= {OBJETIVO:",d+",","CAMINO:",
+        #imprimirLista(s); print "}"
     return poblacioninicial
 
 # Operador de cruce: crossover
@@ -183,8 +190,8 @@ def algoritmo():
     mejorIteracion = 0
     for i in range(1000): # numero de iteraciones
         poblacionintermedia = [] # resetea la pob intermedia
-        print "\nITERACION:",i+1
-        print "\nSELECCION"
+        #print "\nITERACION:",i+1
+        #print "\nSELECCION"
         for ntorneo in range(nPoblacion): # TORNEO
             menor = 0;
             candidato1 = torneoAleatorio(); candidato2 = torneoAleatorio()
@@ -193,54 +200,74 @@ def algoritmo():
                 menor = candidato1
             else:
                 menor = candidato2
-            print "\tTORNEO %i:" % ntorneo,candidato1,candidato2,"GANA",menor
+            #print "\tTORNEO %i:" % ntorneo,candidato1,candidato2,"GANA",menor
             poblacionintermedia.append(list(poblacionactual[menor]))
-        print "\nCRUCE"
+        #print "\nCRUCE"
         for ncruce in range(0,nPoblacion,2): # de 2 en 2
             aleatorio = floatAleatorio()
-            print "\tCRUCE:",ncruce,ncruce+1,"(ALEATORIO: %.6f)"%aleatorio,
+            #print "\tCRUCE:",ncruce,ncruce+1,"(ALEATORIO: %.6f)"%aleatorio,
             if aleatorio>Pc:
-                print "NO SE CRUZA"
+                "NO SE CRUZA"
+                #print "NO SE CRUZA"
             else:
                 # CRUCE
                 padre = poblacionintermedia[ncruce]
                 madre = poblacionintermedia[ncruce+1]
                 i1 = ciudadAleatoria()-1
                 i2 = ciudadAleatoria()-1
-                print "CORTES:",i1,i2
+                #print "CORTES:",i1,i2
                 hijo = cruce(padre, madre, i1, i2)
                 hija = cruce(madre, padre, i1, i2)
                 poblacionintermedia[ncruce] = list(hijo)
                 poblacionintermedia[ncruce+1] = list(hija)
-        print "\nMUTACION"
+        #print "\nMUTACION"
         for ind in range(nPoblacion):
             individuo = poblacionintermedia[ind]
-            print "\tINDIVIDUO",ind
+            #print "\tINDIVIDUO",ind
             for pos in range(len(individuo)):
                 aleatorio = floatAleatorio()
-                print "\t\tPOSICION:",pos,"(ALEATORIO %.6f) "%aleatorio,
+                #print "\t\tPOSICION:",pos,"(ALEATORIO %.6f) "%aleatorio,
                 if aleatorio > Pm:
-                    print "NO MUTA"
+                    "NO MUTA"
+                    #print "NO MUTA"
                 else:
                     mutacion = ciudadAleatoria()-1
-                    print "INTERCAMBIO CON:", mutacion
+                    #print "INTERCAMBIO CON:", mutacion
                     # MUTACION
                     poblacionintermedia[ind][mutacion],poblacionintermedia[ind][pos] = poblacionintermedia[ind][pos], poblacionintermedia[ind][mutacion]
-        print "REEMPLAZO"
+        #print "REEMPLAZO"
         poblacionactual = reemplazo(poblacionactual, poblacionintermedia)
         for ind in range(nPoblacion):
             individuo = poblacionactual[ind]
-            print "INDIVIDUO",ind,"= {OBJETIVO: %i," % coste(individuo),"CAMINO:",
-            imprimirLista(individuo); print "}"
+            #print "INDIVIDUO",ind,"= {OBJETIVO: %i," % coste(individuo),"CAMINO:",
+            #imprimirLista(individuo); print "}"
         m, c = obtenerMejor(poblacionactual)
         if c < costeminimo:
             mejorsolucion = list(m)
             costeminimo = c
             mejorIteracion = i+1
-    print "\n\nMEJOR SOLUCION: "
-    imprimirLista(mejorsolucion)
-    print "\nFUNCION OBJETIVO:",costeminimo
-    print "ITERACION:",mejorIteracion
-leerDistancias()
-leerAleatorios()
-algoritmo()
+    #print "\n\nMEJOR SOLUCION: "
+    #imprimirLista(mejorsolucion)
+    #print "\nFUNCION OBJETIVO:",costeminimo
+    #print "ITERACION:",mejorIteracion
+    return costeminimo
+
+# programa
+def main():
+    minimos=[]
+    leerDistancias()
+    global filealeatorios
+    if len(sys.argv) > 1: # fichero aleatorios
+        filealeatorios = sys.argv[1] # cambio el fichero por defecto
+        leerAleatorios() # leo el fichero
+    else: # generar aleatorios
+        generarAleatorios()
+    for i in range(10):
+        minimos.append(algoritmo())
+    minimos = sorted(minimos)
+    print "MINIMO: %i" % minimos[0]
+    print "MAXIMO: %i" % minimos[9]
+    print "MEDIA: %f" % numpy.mean(minimos)
+    print "DESVIACION: %f" % numpy.std(minimos)
+
+main()
