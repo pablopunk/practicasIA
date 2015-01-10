@@ -3,16 +3,15 @@
 # Bibliotecas de python
 import random   # numeros aleatorios
 import math     # operaciones matematicas
-#import numpy    # otras operaciones matematicas
 
 # Variables globales
-nCiudades = 10  # Numero de ciudades
+nCiudades = 100  # Numero de ciudades
 nPoblacion= 100 # Numero de soluciones en una poblacion
 Pc = 0.9        # Probabilidad de cruce
 Pm = 0.01       # Probabilidad de mutacion
 distancias = {} # Diccionario de distancias
-filedistancias = "distancias.txt"   # 
-filealeatorios = "aleatorios.txt"   # Archivos
+filedistancias = "n100/distancias.txt"   # 
+filealeatorios = "n100/aleatorios.txt"   # Archivos
 aleatorios = [] # lista de numeros aleatorios
 cuentaAleatorios = 0
 
