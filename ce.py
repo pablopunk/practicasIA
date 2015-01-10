@@ -170,10 +170,18 @@ def reemplazo(vieja, intermedia):
     intermedia[nPoblacion-2] = vieja[0]
     return intermedia
 
+# obtener la mejor solucion de una poblacion y su coste
+def obtenerMejor(lista):
+    ret = list(sorted(lista, key=coste))
+    minim = ret[0]; c = coste(ret[0])
+    return minim, c
+
 # cuerpo principal del algoritmo
 def algoritmo():
     poblacionactual = obtenerpoblacioninicial()
     poblacionintermedia = []
+    mejorsolucion, costeminimo = obtenerMejor(poblacionactual)
+    mejorIteracion = 0
     for i in range(1000): # numero de iteraciones
         poblacionintermedia = [] # resetea la pob intermedia
         print "\nITERACION:",i+1
@@ -225,7 +233,15 @@ def algoritmo():
             individuo = poblacionactual[ind]
             print "INDIVIDUO",ind,"= {OBJETIVO: %i," % coste(individuo),"CAMINO:",
             imprimirLista(individuo); print "}"
+        m, c = obtenerMejor(poblacionactual)
+        if c < costeminimo:
+            mejorsolucion = list(m)
+            costeminimo = c
+            mejorIteracion = i+1
+    print "\n\nMEJOR SOLUCION: "
+    imprimirLista(mejorsolucion)
+    print "\nFUNCION OBJETIVO:",costeminimo
+    print "ITERACION:",mejorIteracion
 leerDistancias()
 leerAleatorios()
 algoritmo()
-
