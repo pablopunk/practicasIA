@@ -4,15 +4,14 @@
 import random   # numeros aleatorios
 import math     # operaciones matematicas
 import sys      # para los argumentos
-import numpy    # operaciones matematicas
 
 # Variables globales
-nCiudades = 10  # Numero de ciudades
+nCiudades = 100  # Numero de ciudades
 nPoblacion= 100 # Numero de soluciones en una poblacion
 Pc = 0.9        # Probabilidad de cruce
 Pm = 0.01       # Probabilidad de mutacion
 distancias = {} # Diccionario de distancias
-filedistancias = "distancias.txt"   # 
+filedistancias = "distancias100.txt"   # 
 filealeatorios = "aleatorios.txt"   # Archivos
 aleatorios = [] # lista de numeros aleatorios
 cuentaAleatorios = 0
@@ -241,7 +240,8 @@ def algoritmo():
             individuo = poblacionactual[ind]
             print "INDIVIDUO",ind,"= {OBJETIVO: %i," % coste(individuo),"CAMINO:",
             imprimirLista(individuo); print "}"
-        m, c = obtenerMejor(poblacionactual)
+        m = list(poblacionactual[0])
+        c = coste(m)
         if c < costeminimo:
             mejorsolucion = list(m)
             costeminimo = c
